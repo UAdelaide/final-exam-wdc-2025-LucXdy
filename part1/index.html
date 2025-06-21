@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DOG OF THE DAY</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        body {
+            background-color: #d000ff;
+            font-family: Papyrus, Comic Sans MS;
+            font-size: 28px;
+            color: lime;
+            overflow: hidden;
+        }
+
+        .dog-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 10px dotted rgb(0, 255, 136);
+            padding: 50px;
+            margin: 40px;
+        }
+
+        button {
+            padding: 30px;
+            background-color: orange;
+            font-size: 10px;
+        }
+
+        .info {
+            width: 90%;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        img {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="dog-container">
+        <h1>WELCOME TO DOG OF THE DAY!</h1>
+
+        <!-- Button with no clear purpose or accessibility -->
+        <button @click="getDog">Get DOG OF THE DAY </button>
+
+        <!-- Image with missing alt -->
+        <img :src="dogImage" />
+
+        <div class="info">
+            <div>Name: LuckyDog</div>
+            <div>Breed: AlienSpecies</div>
+            <div>Needs: 2423 walks per day</div>
+            <div>Size: Massive </div>
+        </div>
+
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    dogImage: ''
+                }
+            },
+            methods: {
+                async getDog() {
+                    const res = await fetch('https://dog.ceo/api/breeds/image/random');
+                    const data = await res.json();
+                    this.dogImage = data.message;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
