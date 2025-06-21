@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/db');
+const db = require('../models/db'); 
 
-// GET all users (for admin/testing)
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT user_id, username, email, role FROM Users');
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
+    res.status(500).json({ error: 'Failed to get users' });
   }
 });
 
-// POST a new user (simple signup)
 router.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body;
 
@@ -35,24 +33,52 @@ router.get('/me', (req, res) => {
   res.json(req.session.user);
 });
 
-// POST login (dummy version)
+
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     const [rows] = await db.query(`
-      SELECT user_id, username, role FROM Users
-      WHERE email = ? AND password_hash = ?
-    `, [email, password]);
+    SELECT user_id, username, role FROM Users
+    WHERE username = ? AND password_hash = ?
+    
+    `, [username, password]);
 
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).send('Invalid credentials');
     }
 
-    res.json({ message: 'Login successful', user: rows[0] });
+    const user = rows[0];
+
+ 
+    req.session.user = {
+      id: user.user_id,
+      username: user.username,
+      role: user.role
+    };
+
+    if (user.role === 'owner') {
+      return res.redirect('/owner-dashboard.html');
+    } else if (user.role === 'walker') {
+      return res.redirect('/walker-dashboard.html');
+    } else {
+      return res.status(400).send('Unknown role');
+    }
+
   } catch (error) {
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).send('Login failed');
   }
+
+});
+
+router.post('/logout', (req, res) => {
+  req.session.destroy(errors => {
+    if (errors) {
+      return res.status(500).send('Cannot logout');
+    }
+    res.clearCookie('connect.sid');
+    res.redirect('/');
+  });
 });
 
 module.exports = router;
