@@ -17,23 +17,6 @@
     <a href="walker-dashboard.html" class="btn btn-outline-success">Walker Dashboard</a>
   </div>
 
-  <form method="POST" action="/api/users/login" class="mb-4 p-4 bg-white rounded shadow-sm" style="max-width: 400px; margin: auto;">
-    <h2 class="text-center mb-4 text-primary">Welcome to the Dog Walking Service!</h2>
-    
-    <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" name="username" class="form-control" id="username" required>
-    </div>
-  
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" name="password" class="form-control" id="password" required>
-    </div>
-  
-    <button type="submit" class="btn btn-primary w-100">Log In</button>
-  </form>
-  
-
   <script>
     const { createApp } = Vue;
     createApp({
